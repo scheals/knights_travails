@@ -2,22 +2,36 @@
 
 # This class handles a knight Chess piece.
 class Knight
-  def move(start, target)
-    return 'Invalid move!' unless valid_move?(start, target)
+  attr_reader :starting_position
 
-    "Moved from #{start} to #{target}."
+  def initialize(starting_position)
+    @current_position = starting_position
   end
 
-  def valid_move?(start, target)
-    return true if [[1, 2], [2, 1]].include?(calculate_distances(start, target))
+  def move(target)
+    return nil unless valid_move?(target)
+
+    @current_position = target
+  end
+
+  def possible_moves
+    offsets.map do |offset|
+      possible_positions = []
+      possible_positions << @current_position[0] + offset[0]
+      possible_positions << @current_position[1] + offset[1]
+      possible_positions
+    end
+  end
+
+  def offsets
+    offsets = []
+    [-1, -2, 1, 2].permutation(2) { |permutation| offsets << permutation }
+    offsets.filter { |permutation| permutation[0].abs != permutation[1].abs }
+  end
+
+  def valid_move?(target)
+    return true if possible_moves.include?(target)
 
     false
-  end
-
-  def calculate_distances(start, target)
-    distances = []
-    distances << (start[0] - target[0]).abs
-    distances << (start[1] - target[1]).abs
-    distances
   end
 end
