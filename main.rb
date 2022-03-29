@@ -13,8 +13,8 @@ knight = Knight.new([3, 3])
 board = Chessboard.new
 # p knight.move([1, 2])
 # p knight.move([0, 2])
-puts "Possible moves for: #{notation_translator(knight.current_position)} are: \n#{notation_translator(knight.possible_moves)}"
-puts "Possible moves for: #{knight.current_position} are: \n#{knight.possible_moves}"
+puts "Possible moves for #{notation_translator(knight.current_position)} are: \n#{notation_translator(board.possible_moves(knight))}"
+puts "Possible moves for: #{knight.current_position} are: \n#{board.possible_moves(knight)}"
 board.put(knight)
 p board.possible_moves(knight)
 # p board.move(knight, [2, 4])
