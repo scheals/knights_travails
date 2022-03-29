@@ -2,7 +2,7 @@
 
 # This class handles a knight Chess piece.
 class Knight
-  attr_reader :starting_position
+  attr_accessor :current_position
 
   def initialize(starting_position)
     @current_position = starting_position
@@ -26,7 +26,7 @@ class Knight
   def offsets
     offsets = []
     [-1, -2, 1, 2].permutation(2) { |permutation| offsets << permutation }
-    offsets.filter { |permutation| permutation[0].abs != permutation[1].abs }
+    offsets.reject { |permutation| permutation[0].abs == permutation[1].abs }
   end
 
   def valid_move?(target)
