@@ -15,36 +15,38 @@ class Chessboard
     (0...8).to_a.repeated_permutation(2) { |permutation| board << create_square(permutation) }
     board
   end
-
+#rubocop: disable all
   def knight_moves(target)
-    queue = [knight.current_position]
+    queue = [find_square(knight.current_position)]
     traversed = []
+    predecessor = nil
     until queue.empty?
-      knight.current_position = queue.shift
-      knight.current_position == target ? break : traversed << knight.current_position
+      knight.current_position = queue.shift.coordinates
+      square = find_square(knight.current_position)
+      square.predecessor ||= predecessor
+      traversed << square
+      break if knight.current_position == target
 
-      queue += possible_moves(knight)
-      queue.reject! { |move| traversed.include?(move) }
+      predecessor = square
+      possible_squares = possible_moves(knight).map { |move| find_square(move) }.reject(&:predecessor)
+      possible_squares.each do |possible_square|
+        possible_square.predecessor = predecessor
+        queue << possible_square
+      end
     end
-    traversed
+    puts retrace_steps(traversed.first, traversed.last)
   end
 
-  # def knight_moves(target)
-  #   queue = [knight.current_position]
-  #   traversed = []
-  #   until queue.empty?
-  #     if queue.first.is_a?(String)
-  #       traversed << queue.shift
-  #       next
-  #     end
-  #     knight.current_position = queue.shift
-  #     knight.current_position == target ? traversed << "<- Got one !" : traversed << knight.current_position
-  #     queue << "Moves from: #{knight.current_position}"
-  #     queue += possible_moves(knight)
-  #     queue.reject! { |move| traversed.include?(move) }
-  #   end
-  #   traversed
-  # end
+  def retrace_steps(start, target)
+    predecessor = target.predecessor
+    steps = [target]
+    until start == predecessor
+      steps << predecessor
+      predecessor = predecessor.predecessor
+    end
+    steps << start
+    steps.reverse
+  end
 
   def put(knight)
     @knight = knight
@@ -65,6 +67,10 @@ class Chessboard
     return false if board.any? { |square| square.coordinates == coordinates }
 
     true
+  end
+
+  def find_square(coordinates)
+    board.find { |square| square.coordinates == coordinates }
   end
 
   def create_square(coordinates)
