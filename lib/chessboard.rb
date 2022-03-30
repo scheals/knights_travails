@@ -12,32 +12,17 @@ class Chessboard
 
   def generate_board
     board = []
-    # 8.times do |i|
-    #   board << create_board_row('a', i + 1)
-    # end
-    (0...8).to_a.repeated_permutation(2) { |permutation| board << permutation }
+    (0...8).to_a.repeated_permutation(2) { |permutation| board << create_square(permutation) }
     board
   end
-
-  # def create_board_row(letter, number)
-  #   return if letter == 'i'
-
-  #   square = create_square(letter, number)
-  #   square.right = create_board_row(letter.succ, number)
-  #   square
-  # end
 
   def knight_moves(target)
     queue = [knight.current_position]
     traversed = []
     until queue.empty?
-      # if queue.first.is_a?(String)
-      #   traversed << queue.shift
-      #   next
-      # end
       knight.current_position = queue.shift
       knight.current_position == target ? break : traversed << knight.current_position
-      # queue << "Moves from: #{knight.current_position} ->"
+
       queue += possible_moves(knight)
       queue.reject! { |move| traversed.include?(move) }
     end
@@ -77,12 +62,12 @@ class Chessboard
   end
 
   def out_of_bounds?(coordinates)
-    return false if board.include?(coordinates)
+    return false if board.any? { |square| square.coordinates == coordinates }
 
     true
   end
 
-  def create_square(letter, number)
-    Square.new(letter, number)
+  def create_square(coordinates)
+    Square.new(coordinates)
   end
 end

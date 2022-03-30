@@ -5,8 +5,12 @@ class Square
   attr_accessor :left, :right, :top, :bottom
   attr_reader :coordinates
 
-  def initialize(letter, number)
-    @coordinates = [letter, number]
-    @left, @right, @top, @bottom = nil
+  def initialize(coordinates)
+    @coordinates = coordinates
+  end
+
+  def chess_notation
+    letters = %w[a b c d e f g h]
+    [letters[coordinates[0]], coordinates[1] + 1].join
   end
 end

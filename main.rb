@@ -11,10 +11,11 @@ def notation_translator(possible_moves)
 end
 knight = Knight.new([3, 3])
 board = Chessboard.new
+p board.board.map { |square| square.chess_notation }
 # p knight.move([1, 2])
 # p knight.move([0, 2])
-puts "Possible moves for #{notation_translator(knight.current_position)} are: \n#{notation_translator(board.possible_moves(knight))}"
-puts "Possible moves for: #{knight.current_position} are: \n#{board.possible_moves(knight)}"
+# puts "Possible moves for #{notation_translator(knight.current_position)} are: \n#{notation_translator(board.possible_moves(knight))}"
+# puts "Possible moves for: #{knight.current_position} are: \n#{board.possible_moves(knight)}"
 board.put(knight)
 p board.possible_moves(knight)
 # p board.move(knight, [2, 4])
