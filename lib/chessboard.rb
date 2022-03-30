@@ -15,37 +15,58 @@ class Chessboard
     (0...8).to_a.repeated_permutation(2) { |permutation| board << create_square(permutation) }
     board
   end
-#rubocop: disable all
-  def knight_moves(target)
-    queue = [find_square(knight.current_position)]
-    traversed = []
-    predecessor = nil
-    until queue.empty?
-      knight.current_position = queue.shift.coordinates
-      square = find_square(knight.current_position)
-      square.predecessor ||= predecessor
-      traversed << square
-      break if knight.current_position == target
 
-      predecessor = square
-      possible_squares = possible_moves(knight).map { |move| find_square(move) }.reject(&:predecessor)
-      possible_squares.each do |possible_square|
-        possible_square.predecessor = predecessor
-        queue << possible_square
-      end
+  def reset_board
+    board = []
+    (0...8).to_a.repeated_permutation(2) { |permutation| board << create_square(permutation) }
+    @board = board
+  end
+
+  def knight_moves(target)
+    traversed = search_path(find_square(knight.current_position), target)
+    puts path_message(traversed.first, traversed.last)
+    reset_board
+  end
+
+  def generate_possible_squares
+    possible_moves(knight).map { |move| find_square(move) }.reject(&:predecessor)
+  end
+
+  def link_predecessors(squares, predecessor)
+    squares.each do |square|
+      square.predecessor = predecessor
     end
-    puts retrace_steps(traversed.first, traversed.last)
   end
 
   def retrace_steps(start, target)
     predecessor = target.predecessor
     steps = [target]
     until start == predecessor
+      break if predecessor.nil?
+
       steps << predecessor
       predecessor = predecessor.predecessor
     end
     steps << start
-    steps.reverse
+    steps.reverse.join(' to ')
+  end
+
+  def search_path(start, target)
+    queue = [start]
+    traversed = []
+    until queue.empty?
+      knight.current_position = queue.shift.coordinates
+      square = find_square(knight.current_position)
+      traversed << square
+      break if knight.current_position == target
+
+      link_predecessors(generate_possible_squares, square).each { |possible_square| queue << possible_square }
+    end
+    traversed
+  end
+
+  def path_message(start, target)
+    "Here's your path for #{start} to #{target}:\n#{retrace_steps(start, target)}"
   end
 
   def put(knight)
