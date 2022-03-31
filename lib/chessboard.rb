@@ -22,8 +22,9 @@ class Chessboard
     @board = board
   end
 
-  def knight_moves(target)
-    traversed = search_path(find_square(knight.current_position), target)
+  def knight_moves(start, target)
+    starting_square = find_square(create_knight(start).current_position)
+    traversed = search_path(starting_square, target)
     puts path_message(traversed.first, traversed.last)
     reset_board
   end
@@ -69,8 +70,8 @@ class Chessboard
     "Here's your path for #{start} to #{target}:\n#{retrace_steps(start, target)}"
   end
 
-  def put(knight)
-    @knight = knight
+  def create_knight(starting_position)
+    @knight = Knight.new(starting_position)
   end
 
   def move(piece, target)
